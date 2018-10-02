@@ -67,6 +67,3 @@ class CandiData:
         #TODO:  Create a scheme for adding new tables to the db with sql script
         #       files in the ./db/update_db folder.
 
-def execute_script_from_file(filename):
-    fd = open(filename, 'r')
-
