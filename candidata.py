@@ -67,3 +67,45 @@ class CandiData:
         #TODO:  Create a scheme for adding new tables to the db with sql script
         #       files in the ./db/update_db folder.
 
+    def get_districts_by_state(self, state):
+        sql_stmt = "SELECT congressionalDistricts FROM states WHERE abbreviated=\"" + state + "\";"
+        self.crsr.execute(sql_stmt)
+        ret = self.crsr.fetchall()
+
+        return ret[0][0]
+
+    def add_congressional_election(self, date, state='ALL', district='ALL', election_type='GENERAL'):
+
+        # build sql statement
+        if( 'ALL' == state ):
+            sql_stmt = "SELECT abbreviated, congressionalDistricts FROM states;"
+
+        else:
+            if ( 2 == len(state) ):
+                sql_stmt = "SELECT abbreviated, congressionalDistricts FROM" \
+                            + " states WHERE abbreviated=\'" + state + "\';"
+
+            else:
+                sql_stmt = "SELECT abbreviated, congressionalDistricts FROM" \
+                            + " states WHERE name=\'" + state + "\';"
+
+        #execute statement
+        self.crsr.execute(sql_stmt)
+        ret = self.crsr.fetchall()
+
+        #add elections
+        self.crsr.execute("BEGIN TRANSACTION;")
+        for item in ret:
+            state = item[0]
+            num_districts = item[1]
+
+            for ii in range( 1, num_districts + 1 ):
+                sql_stmt = "INSERT INTO elections(state, district, " \
+                           "electionType, electionDate) VALUES(\'" + state + \
+                           "\', " + str(ii) + ", \'" + election_type + "\', " + date \
+                           + " );"
+
+                self.crsr.execute(sql_stmt)
+
+        self.crsr.execute("COMMIT;")
+
