@@ -5,15 +5,18 @@ CREATE TABLE versionHistory(
 );
 
 CREATE TABLE candidates(
-    candidateID INTEGER PRIMARY KEY,
+    candidateID INTEGER PRIMARY KEY, --TODO: make this autoincrement
     name VARCHAR(64),
-    partyAffiliation VARCHAR(64)
+    dateOfBirth VARCHAR(16),
+    partyAffiliation VARCHAR(64),
+    active BOOLEAN DEFAULT TRUE
 );
 
 CREATE TABLE candidateAliases(
     candidateID INTEGER,
     primaryName VARCHAR(64),
-    alias VARCHAR(64)
+    alias VARCHAR(64),
+    UNIQUE( candidateID, primaryName, alias )
     --FOREIGN KEY candidateID REFERENCES candidates( candidateID )
 );
 
@@ -97,7 +100,7 @@ CREATE TABLE candidateContactInfo(
     candidateID INTEGER,
     candidateName VARCHAR(64),
     contactType VARCHAR(64),
-    active BOOLEAN,
+    active BOOLEAN DEFAULT TRUE,
     contactPlatform VARCHAR(64),
     contactInfo VARCHAR(256)
     --FOREIGN KEY candidateID REFERENCES candidates( candidateID ),
